@@ -94,15 +94,17 @@ ROOT is the project, and RECIPE is a package recipe."
   "Find existing recipe files in ROOT."
   (let* ((root (decask--require-root root))
          (dir (expand-file-name decask-recipe-cache-directory root)))
-    (-map
-     (lambda (file)
-       (ignore-errors
-         (with-temp-buffer
-           (insert-file-contents file)
-           (goto-char (point-min))
-           (read))))
-     (and (file-directory-p dir)
-          (directory-files dir t)))))
+    (->> (and (file-directory-p dir)
+              (directory-files dir t))
+         (-map
+          (lambda (file)
+            (ignore-errors
+              (when (file-exists-p file)
+                (with-temp-buffer
+                  (insert-file-contents file)
+                  (goto-char (point-min))
+                  (read))))))
+         (delq nil))))
 
 (defun decask--main-file-p (file)
   "Return non-nil if FILE is a main file."
@@ -143,14 +145,14 @@ ROOT is the project, and RECIPE is a package recipe."
               (princ recipe (current-buffer))
               (setq buffer-file-name recipe-file)
               (setq uncovered-files (cl-set-difference uncovered-files
-                                                       (decask--expand-files-in-recipe recipe)
+                                                       (decask--expand-files-in-recipe
+                                                        root
+                                                        recipe)
                                                        :test #'string-equal))
               (emacs-lisp-mode)
               (save-buffer))))
         (message "Copying %s to %s" package-name dest-dir)
-        (copy-file recipe-file (expand-file-name package-name dest-dir))))
-    (when uncovered-files
-      (user-error "Still remaining files %s" uncovered-files))))
+        (copy-file recipe-file (expand-file-name package-name dest-dir))))))
 
 ;;;###autoload
 (defmacro decask-with-packages (root &rest progn)
