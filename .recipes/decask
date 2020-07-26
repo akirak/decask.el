@@ -1,0 +1,1 @@
+(decask :fetcher github :repo "akirak/decask.el")
