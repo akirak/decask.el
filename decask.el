@@ -4,8 +4,8 @@
 
 ;; Author: Akira Komamura <akira.komamura@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "25.1") (dash "2.12") (package-build "0"))
-;; Keywords: maint
+;; Package-Requires: ((emacs "25.1") (dash "2.12") (package-build "0-git"))
+;; Keywords: maint lisp
 ;; URL: https://github.com/akirak/decask.el
 
 ;; This file is not part of GNU Emacs.
@@ -34,9 +34,12 @@
 
 (require 'package-build)
 (require 'dash)
+(require 'subr-x)
 
 (defgroup decask nil
-  "Recipe helper for Emacs packages.")
+  "Recipe helper for Emacs packages."
+  :group 'maint
+  :group 'lisp)
 
 (defcustom decask-recipes-dir
   (bound-and-true-p package-build-recipes-dir)
@@ -140,8 +143,8 @@ ROOT is the project, and RECIPE is a package recipe."
                    ;; TODO: Generate files spec
                    (recipe (read--expression
                             (format "Confirm recipe for \"%s\": " package-name)
-                            (sexp-to-string `(,(intern package-name)
-                                              ,@fetcher-spec)))))
+                            (prin1-to-string `(,(intern package-name)
+                                               ,@fetcher-spec)))))
               (princ recipe (current-buffer))
               (setq buffer-file-name recipe-file)
               (setq uncovered-files (cl-set-difference uncovered-files
