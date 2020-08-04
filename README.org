@@ -1,0 +1,4 @@
+* decask.el
+This is an Emacs Lisp package for copying MELPA recipes for your project back to =.recipes= directory at the project root.
+
+To use this package, first set =decask-recipes-dir= variable to the =recipes= directory in your local copy of MELPA. Then run =decask-discover-packages= command, which scans Emacs Lisp files in the current project and retrieves recipes for the packages in your project.
