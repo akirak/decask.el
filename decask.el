@@ -106,7 +106,7 @@ ROOT is the project, and RECIPE is a package recipe."
                 (with-temp-buffer
                   (insert-file-contents file)
                   (goto-char (point-min))
-                  (read))))))
+                  (read (current-buffer)))))))
          (delq nil))))
 
 (defun decask--main-file-p (file)
