@@ -1,0 +1,15 @@
+name: CI
+on:
+  pull_request:
+  push:
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: cachix/install-nix-action@v10
+    - uses: actions/checkout@v2
+    - name: Install cachix and enable emacs-ci
+      run: nix-env -iA cachix -f https://cachix.org/api/v1/install && cachix use emacs-ci
+    - name: Install elinter
+      run: nix-env -if https://github.com/akirak/elinter/archive/v4.tar.gz -A main
+    - run: elinter -e all --melpazoid
